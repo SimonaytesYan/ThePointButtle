@@ -2,104 +2,103 @@ using UnityEngine;
 
 public class Move : MonoBehaviour
 {
-    Vector3 speed;
-    Vector3Int movingCoeff;
-    float weight;
+    private float moveSpeed = 5f;
+    private float jumpHeight = 1.5f;
+    private float gravity = -9.81f;
 
-    Vector3 FrictionCoeff = new Vector3(0.1f, 0f, 0.1f);
-    const float DeltaTime = 0.1f;
-    const float Mass = 1f;
-    const float G = 9.8f;
-    Vector3 MovingAcceleration = new Vector3(5f, 0, 5f);
+    private const float mouseSensitivity = 2f;
+    private const float maxLookAngle = 90f;
+
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private float groundDistance = 0.4f;
+    [SerializeField] private LayerMask groundMask;
+
+    private CharacterController characterController;
+    private Camera player_camera;
+
+    private float cur_y_speed = 0;
+    private float vertical_camera_rotation = 0f;
+    private bool is_grounded = false;
+
+    // Input variables
+    private Vector3 input_move_coeff = Vector3.zero;
+    private Vector2 input_mouse_rotate = Vector2.zero;
 
     void Start()
     {
-        weight = Mass * G;
+        characterController = GetComponent<CharacterController>();
+        player_camera = GetComponentInChildren<Camera>();
+
+        // Lock cursor to game window
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        CheckKeybordPress();
-        ProcessMoving();
+        ProcessInput();
+        HandleGroundCheck();
+        HandleMovement();
+        ProcessRotation();
+        ApplyGravity();
     }
 
-    void CheckKeybordPress()
+    private void ProcessInput()
     {
-        if (Input.GetKey(KeyCode.W))
-        {
-            movingCoeff.x = 1;
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            movingCoeff.x = -1;
-        }
-        else
-        {
-            movingCoeff.x = 0;
-        }
+        input_move_coeff.x = -Input.GetAxis("Horizontal");
+        input_move_coeff.z = Input.GetAxis("Vertical");
 
-        if (Input.GetKey(KeyCode.A))
-        {
-            movingCoeff.z = 1;
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            movingCoeff.z = -1;
-        }
-        else
-        {
-            movingCoeff.z = 0;
-        }
+        input_mouse_rotate.x = Input.GetAxis("Mouse X") * mouseSensitivity;
+        input_mouse_rotate.y = Input.GetAxis("Mouse Y") * mouseSensitivity;
     }
 
-    void ProcessMoving()
+    private void HandleGroundCheck()
     {
-        Vector3 power = new Vector3();
-        power.x = movingCoeff.x * MovingAcceleration.x;
-        power.y = movingCoeff.y * MovingAcceleration.y;
-        power.z = movingCoeff.z * MovingAcceleration.z;
+        is_grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
-        ProcessFrictionPower(ref power);
-
-        CalculateNewPosition(power);
+        // Reset cur_y_speed when grounded
+        if (is_grounded && cur_y_speed < 0)
+        {
+            cur_y_speed = -2f;
+        }
     }
 
-    void ProcessFrictionPower(ref Vector3 power)
+    private void HandleMovement()
     {
-        Debug.Log("power.x = " + power.x);
-        if (speed.x != 0)
+        // Calculate movement direction
+        Vector3 moveDirection = transform.right * input_move_coeff.z + transform.forward * input_move_coeff.x;
+
+        // Normalize to prevent faster diagonal movement
+        if (moveDirection.magnitude > 1f)
         {
-            if (speed.x < 0)
-                power.x += FrictionCoeff.x * weight;
-            else
-                power.x -= FrictionCoeff.x * weight;
+            moveDirection.Normalize();
         }
 
-        if (speed.z != 0)
+        // Apply movement
+        characterController.Move(moveDirection * moveSpeed * Time.deltaTime);
+
+        // Handle jumping
+        if (Input.GetButtonDown("Jump") && is_grounded)
         {
-            if (speed.z < 0)
-                power.z += FrictionCoeff.z * weight;
-            else
-                power.z -= FrictionCoeff.z * weight;
+            cur_y_speed = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
-
-        Debug.Log("power.x = " + power.x);
     }
 
-    void CalculateNewPosition(Vector3 power)
+    private void ProcessRotation()
     {
-        Vector3 acceleration = power / Mass;
+        transform.Rotate(Vector3.up * input_mouse_rotate.x);
 
-        speed.x += DeltaTime * acceleration.x;
-        speed.y += DeltaTime * acceleration.y;
-        speed.z += DeltaTime * acceleration.z;
-
-        Vector3 pos = transform.position;
-        pos.x += DeltaTime * speed.x;
-        pos.y += DeltaTime * speed.y;
-        pos.z += DeltaTime * speed.z;
-
-        transform.position = pos;
+        // Vertical camera rotation
+        vertical_camera_rotation -= input_mouse_rotate.y;
+        vertical_camera_rotation = Mathf.Clamp(vertical_camera_rotation, -maxLookAngle, maxLookAngle);
+        Vector3 local_rotation = player_camera.transform.localRotation.eulerAngles;
+        player_camera.transform.localRotation = Quaternion.Euler(vertical_camera_rotation, local_rotation.y, local_rotation.z);
     }
+
+    private void ApplyGravity()
+    {
+        cur_y_speed += gravity * Time.deltaTime;
+        characterController.Move(new Vector3(0, cur_y_speed * Time.deltaTime, 0));
+    }
+
 }
