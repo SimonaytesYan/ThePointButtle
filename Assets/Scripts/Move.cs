@@ -13,10 +13,13 @@ public class Move : MonoBehaviour
     [SerializeField] private float groundDistance = 0.4f;
     [SerializeField] private LayerMask groundMask;
 
-    private CharacterController characterController;
-    private Camera player_camera;
+    [SerializeField] private Transform cameraPitchPivot;
 
-    private float cur_y_speed = 0;
+    [SerializeField] private Animator animator;
+
+    private CharacterController characterController;
+
+    private float cur_y_speed = 0f;
     private float vertical_camera_rotation = 0f;
     private bool is_grounded = false;
 
@@ -27,16 +30,27 @@ public class Move : MonoBehaviour
     void Start()
     {
         characterController = GetComponent<CharacterController>();
-        player_camera = GetComponentInChildren<Camera>();
 
         // Lock cursor to game window
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        if (cameraPitchPivot == null)
+        {
+            Transform found = transform.Find("CameraPivot");
+            if (found != null) cameraPitchPivot = found;
+        }
+
+        if (animator == null) { 
+            animator = GetComponentInChildren<Animator>();
+        }
+
     }
 
     void Update()
     {
         ProcessInput();
+        UpdateAnimatorParams();
         HandleGroundCheck();
         HandleMovement();
         ProcessRotation();
@@ -45,12 +59,23 @@ public class Move : MonoBehaviour
 
     private void ProcessInput()
     {
-        input_move_coeff.x = -Input.GetAxis("Horizontal");
-        input_move_coeff.z = Input.GetAxis("Vertical");
+        input_move_coeff.x = Input.GetAxis("Horizontal"); 
+        input_move_coeff.z = Input.GetAxis("Vertical");  
 
         input_mouse_rotate.x = Input.GetAxis("Mouse X") * mouseSensitivity;
         input_mouse_rotate.y = Input.GetAxis("Mouse Y") * mouseSensitivity;
     }
+
+    private void UpdateAnimatorParams()
+    {
+        if (animator == null) { 
+            return;
+        }
+
+        animator.SetFloat("MoveX", input_move_coeff.x);
+        animator.SetFloat("MoveY", input_move_coeff.z);
+    }
+
 
     private void HandleGroundCheck()
     {
@@ -65,8 +90,9 @@ public class Move : MonoBehaviour
 
     private void HandleMovement()
     {
-        // Calculate movement direction
-        Vector3 moveDirection = transform.right * input_move_coeff.z + transform.forward * input_move_coeff.x;
+        Vector3 moveDirection =
+            transform.forward * input_move_coeff.z +
+            transform.right   * input_move_coeff.x;
 
         // Normalize to prevent faster diagonal movement
         if (moveDirection.magnitude > 1f)
@@ -86,13 +112,16 @@ public class Move : MonoBehaviour
 
     private void ProcessRotation()
     {
+       
         transform.Rotate(Vector3.up * input_mouse_rotate.x);
 
-        // Vertical camera rotation
         vertical_camera_rotation -= input_mouse_rotate.y;
         vertical_camera_rotation = Mathf.Clamp(vertical_camera_rotation, -maxLookAngle, maxLookAngle);
-        Vector3 local_rotation = player_camera.transform.localRotation.eulerAngles;
-        player_camera.transform.localRotation = Quaternion.Euler(vertical_camera_rotation, local_rotation.y, local_rotation.z);
+
+        if (cameraPitchPivot != null)
+        {
+            cameraPitchPivot.localRotation = Quaternion.Euler(vertical_camera_rotation, 0f, 0f);
+        }
     }
 
     private void ApplyGravity()
@@ -100,5 +129,4 @@ public class Move : MonoBehaviour
         cur_y_speed += gravity * Time.deltaTime;
         characterController.Move(new Vector3(0, cur_y_speed * Time.deltaTime, 0));
     }
-
 }

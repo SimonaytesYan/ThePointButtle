@@ -14,6 +14,11 @@ public class Shooting : MonoBehaviour
 
     [SerializeField] private LayerMask hit_mask;
 
+    [SerializeField] private Animator animator; 
+    private static readonly int ShootHash = Animator.StringToHash("Shoot");
+    public AudioClip shootClip;
+
+
     private LineRenderer line_renderer;
     private Camera player_camera;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -37,9 +42,18 @@ public class Shooting : MonoBehaviour
     void Update()
     {
         ProcessInput();
-
         ProcessLaser();
     }
+
+    void Fire()
+    {
+        animator?.SetTrigger(ShootHash);
+
+        if (shootClip != null) {
+            AudioManager.Instance?.PlaySfx(shootClip, 1f);
+        }
+    }
+
 
     private void ProcessLaser()
     {
@@ -58,6 +72,7 @@ public class Shooting : MonoBehaviour
     {
         if (Input.GetButtonDown("Fire1"))
         {
+            Fire();
             Debug.Log("Mouse down");
             Shoot();
         }
