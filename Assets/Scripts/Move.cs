@@ -1,6 +1,7 @@
 using UnityEngine;
+using Unity.Netcode;
 
-public class Move : MonoBehaviour
+public class Move : NetworkBehaviour
 {
     private float moveSpeed = 5f;
     private float jumpHeight = 1.5f;
@@ -24,23 +25,43 @@ public class Move : MonoBehaviour
     private Vector3 input_move_coeff = Vector3.zero;
     private Vector2 input_mouse_rotate = Vector2.zero;
 
-    void Start()
+    private NetworkVariable<Vector3> net_pos = new NetworkVariable<Vector3>(
+        default,
+        readPerm: NetworkVariableReadPermission.Everyone,
+        writePerm: NetworkVariableWritePermission.Owner
+    );
+
+    public override void OnNetworkSpawn()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
+
         characterController = GetComponent<CharacterController>();
         player_camera = GetComponentInChildren<Camera>();
 
-        // Lock cursor to game window
+        // Lock cursor to game window, only for local player
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        net_pos.Value = transform.position;
     }
 
     void Update()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
+
         ProcessInput();
         HandleGroundCheck();
         HandleMovement();
         ProcessRotation();
         ApplyGravity();
+
+        net_pos.Value = transform.position;
     }
 
     private void ProcessInput()
@@ -100,5 +121,4 @@ public class Move : MonoBehaviour
         cur_y_speed += gravity * Time.deltaTime;
         characterController.Move(new Vector3(0, cur_y_speed * Time.deltaTime, 0));
     }
-
 }

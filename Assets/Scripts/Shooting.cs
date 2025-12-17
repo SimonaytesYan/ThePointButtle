@@ -1,7 +1,8 @@
 using System.Net;
 using UnityEngine;
+using Unity.Netcode;
 
-public class Shooting : MonoBehaviour
+public class Shooting : NetworkBehaviour
 {
     private Color debug_ray_color = Color.red;
 
@@ -13,7 +14,19 @@ public class Shooting : MonoBehaviour
 
     private LineRenderer line_renderer;
     private Camera player_camera;
+
+    private bool is_setup = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public override void OnNetworkSpawn()
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+        is_setup = true;
+    }
+
     void Start()
     {
         player_camera = GetComponentInChildren<Camera>();
@@ -31,6 +44,11 @@ public class Shooting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!IsOwner || !is_setup)
+        {
+            return;
+        }
+
         ProcessInput();
 
         ProcessLaser();
@@ -60,37 +78,71 @@ public class Shooting : MonoBehaviour
 
     private void Shoot()
     {
+        if (player_camera == null) 
+        {
+            Debug.Log("Camera not ready yet, skipping shoot.");
+            return;
+        }
+
         Vector3 rayOrigin = player_camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.5f));
-        Ray ray = new Ray(rayOrigin, player_camera.transform.forward);
+        Vector3 rayDirection = player_camera.transform.forward;
 
-        RaycastHit hitInfo;
-        Vector3 endPoint;
+        // call server to collide objects
+        ShootServerRpc(rayOrigin, rayDirection);
+    }
 
-        if (Physics.Raycast(ray, out hitInfo, raycast_range, hit_mask))
+    private void OnHitDetected(RaycastHit hit)
+    {
+        if (!IsServer)
         {
-            endPoint = hitInfo.point;
-            OnHitDetected(hitInfo);
-
-            Debug.Log($"Попал в: {hitInfo.collider.name} на расстоянии: {hitInfo.distance}");
-        }
-        else
-        {
-            Debug.Log("Не попал");
-            endPoint = rayOrigin + ray.direction * raycast_range;
+            Debug.Log("OnHitDetected is only allowed to be called from a server!");
+            return;
         }
 
-        line_renderer.SetPosition(0, rayOrigin);
-        line_renderer.SetPosition(1, endPoint);
+        Debug.Log($"Hit Detection {hit}");
+        Debug.Log($"Hit Detection {hit.transform}");
+        
+        if (hit.transform.TryGetComponent<EnemyHealth>(out var enemyHealth))
+        {
+            Debug.Log($"Hit Detection {enemyHealth}");
+            enemyHealth.KillServerRpc();
+        }
+    }
+
+    private void ShowLaser(Vector3 start, Vector3 end)
+    {
+        line_renderer.SetPosition(0, start);
+        line_renderer.SetPosition(1, end);
         line_renderer.enabled = true;
 
         laser_timer = laser_duration;
     }
 
-    private void OnHitDetected(RaycastHit hit)
+    [ServerRpc]
+    private void ShootServerRpc(Vector3 rayOrigin, Vector3 direction)
     {
-        Debug.Log($"Hit Detection {hit}");
-        Debug.Log($"Hit Detection {hit.transform}");
-        Debug.Log($"Hit Detection {hit.transform.GetComponent<EnemyHealth>()}");
-        hit.transform.GetComponent<EnemyHealth>().Kill();
+        Ray ray = new Ray(rayOrigin, direction);
+        RaycastHit hitInfo;
+        
+        if (Physics.Raycast(ray, out hitInfo, raycast_range, hit_mask))
+        {
+            OnHitDetected(hitInfo);
+
+            // show the corresponding laser on all clients
+            ShowLaserClientRpc(rayOrigin, hitInfo.point);
+        }
+        else
+        {
+            // show the corresponding laser on all clients
+            ShowLaserClientRpc(rayOrigin, rayOrigin + ray.direction * raycast_range);
+        }
+    }
+    
+    [ClientRpc]
+    private void ShowLaserClientRpc(Vector3 start, Vector3 end)
+    {
+        // TODO: we can optimize this place:
+        // No need in sending the "ShowLaser" event to the shooter via network.
+        ShowLaser(start, end);
     }
 }
