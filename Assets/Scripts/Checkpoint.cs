@@ -18,10 +18,9 @@ public class Checkpoint : MonoBehaviour
 
     int firstTeamPrescore = 0;
     int secondTeamPrescore = 0;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
-        
     }
 
     // Update is called once per frame
@@ -94,25 +93,42 @@ public class Checkpoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<PlayerNumber>().getPlayerInd() == 1)
+        Debug.Log("Trigget enter\n");
+        PlayerNumber player_number_obj = null;
+        if (other.gameObject.TryGetComponent<PlayerNumber>(out player_number_obj))
         {
-            FirstPlayerEnter();
-        }
-        else if (other.gameObject.GetComponent<PlayerNumber>().getPlayerInd() == 2)
-        {
-            SecondPlayerEnter();
+            Debug.Log("Player enter\n");
+            if (player_number_obj.getPlayerInd() == 1)
+            {
+                FirstPlayerEnter();
+            }
+            else if (player_number_obj.getPlayerInd() == 2)
+            {
+                SecondPlayerEnter();
+            }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.GetComponent<PlayerNumber>().getPlayerInd() == 1)
+        Debug.Log("Trigget exit\n");
+        PlayerNumber player_number_obj = null;
+        if (other.gameObject.TryGetComponent<PlayerNumber>(out player_number_obj))
         {
-            FirstPlayerExit();
+            Debug.Log("Player exit\n");
+            if (other.gameObject.GetComponent<PlayerNumber>().getPlayerInd() == 1)
+            {
+                FirstPlayerExit();
+            }
+            else if (other.gameObject.GetComponent<PlayerNumber>().getPlayerInd() == 2)
+            {
+                SecondPlayerExit();
+            }
         }
-        else if (other.gameObject.GetComponent<PlayerNumber>().getPlayerInd() == 2)
-        {
-            SecondPlayerExit();
-        }
+    }
+
+    public (int firstPlayerScore, int secondPlayerScore) GetPlayerScore()
+    {
+        return (firstTeamScore, secondTeamScore);
     }
 }
