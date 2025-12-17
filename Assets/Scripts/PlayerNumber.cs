@@ -1,8 +1,9 @@
 using UnityEngine;
+using Unity.Netcode;
 
-public class PlayerNumber : MonoBehaviour
+public class PlayerNumber : NetworkBehaviour
 {
-    [SerializeField] private int player_ind = 0;
+    public NetworkVariable<int> player_ind = new NetworkVariable<int>();
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -17,6 +18,6 @@ public class PlayerNumber : MonoBehaviour
 
     public int getPlayerInd()
     {
-        return player_ind;
+        return player_ind.Value;
     }
 }
