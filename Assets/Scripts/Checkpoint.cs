@@ -11,6 +11,7 @@ public class Checkpoint : MonoBehaviour
     }
 
     [SerializeField] private LayerMask playerMask;
+    [SerializeField] private GameObject gameManager;
     private CheckpointState checkpointState = CheckpointState.NoPlayerInside;
 
     int firstTeamScore = 0;
@@ -38,6 +39,7 @@ public class Checkpoint : MonoBehaviour
             {
                 firstTeamPrescore = 0;
                 firstTeamScore++;
+                gameManager.GetComponent<GameManager>().updatePlayerScore();
             }
         }
         else
@@ -52,6 +54,7 @@ public class Checkpoint : MonoBehaviour
             {
                 secondTeamPrescore = 0;
                 secondTeamScore++;
+                gameManager.GetComponent<GameManager>().updatePlayerScore();
             }
         }
         else

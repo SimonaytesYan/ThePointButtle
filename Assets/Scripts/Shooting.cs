@@ -60,7 +60,8 @@ public class Shooting : MonoBehaviour
 
     private void Shoot()
     {
-        Vector3 rayOrigin = player_camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.5f));
+        // 0.5f, 0.5f, 0.5f
+        Vector3 rayOrigin = player_camera.ViewportToWorldPoint(new Vector3(0f, 0f, 0f));
         Ray ray = new Ray(rayOrigin, player_camera.transform.forward);
 
         RaycastHit hitInfo;
@@ -88,9 +89,10 @@ public class Shooting : MonoBehaviour
 
     private void OnHitDetected(RaycastHit hit)
     {
-        Debug.Log($"Hit Detection {hit}");
-        Debug.Log($"Hit Detection {hit.transform}");
-        Debug.Log($"Hit Detection {hit.transform.GetComponent<EnemyHealth>()}");
-        hit.transform.GetComponent<EnemyHealth>().Kill();
+        EnemyHealth enemy_health = null;
+        if (hit.transform.TryGetComponent<EnemyHealth>(out enemy_health))
+        {
+            enemy_health.Kill();
+        }
     }
 }

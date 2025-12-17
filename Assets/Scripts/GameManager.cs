@@ -6,12 +6,44 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject gameOverUI;
+    [SerializeField] private GameObject inGameUI;
+    private TMP_Text player1Score;
+    private TMP_Text player2Score;
     [SerializeField] private List<GameObject> checkpoints = new List<GameObject>();
-    private const float gameTime = 12f;
+    private const float gameTime = 100f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        player1Score = inGameUI.transform.Find("Player1Score").gameObject.GetComponent<TMP_Text>();
+        player2Score = inGameUI.transform.Find("Player2Score").gameObject.GetComponent<TMP_Text>();
         Invoke(nameof(GameOver), gameTime);
+    }
+
+    void Update()
+    {
+    }
+
+    public void updatePlayerScore()
+    {
+        var score = calcPlayerScore();
+
+        player1Score.text = score.first_player_score.ToString();
+        player2Score.text = score.second_player_score.ToString();
+    }
+
+    (int first_player_score, int second_player_score) calcPlayerScore()
+    {
+        int first_player_score = 0;
+        int second_player_score = 0;
+        foreach (GameObject checkpoint in checkpoints)
+        {
+            var checkpoint_results = checkpoint.GetComponent<Checkpoint>().GetPlayerScore();
+
+            first_player_score += checkpoint_results.firstPlayerScore;
+            second_player_score += checkpoint_results.secondPlayerScore;
+        }
+
+        return (first_player_score, second_player_score);
     }
 
     public void GameOver()
@@ -21,22 +53,14 @@ public class GameManager : MonoBehaviour
         TMP_Text game_over_text = gameOverUI.GetComponentInChildren<TMP_Text>();
         Cursor.lockState = CursorLockMode.None;
 
-        int first_player_score = 0;
-        int second_player_score = 0;
-        foreach(GameObject checkpoint in checkpoints)
-        {
-            var checkpoint_results = checkpoint.GetComponent<Checkpoint>().GetPlayerScore();
+        var score = calcPlayerScore();
 
-            first_player_score += checkpoint_results.firstPlayerScore;
-            second_player_score += checkpoint_results.secondPlayerScore;
-        }
-        
-        if (first_player_score > second_player_score)
+        if (score.first_player_score > score.second_player_score)
         {
             game_over_text.text = "First player win!!!";
             Debug.Log("First player win!");
         }
-        else if (first_player_score < second_player_score)
+        else if (score.first_player_score < score.second_player_score)
         {
             game_over_text.text = "Second player win!!!";
             Debug.Log("Second player win!");
