@@ -3,10 +3,13 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour
 {
     private Vector3 base_position = Vector3.zero;
+    [SerializeField] private int base_health = 100;
+    private int health;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         base_position = transform.position;
+        health = base_health;
     }
 
     // Update is called once per frame
@@ -15,9 +18,20 @@ public class EnemyHealth : MonoBehaviour
         
     }
 
+    public void GetDamage(int damage)
+    {
+        health -= damage;
+        Debug.Log($"Object get damage: {damage}. Now {health} HP");
+        if (health <= 0)
+        {
+            Kill();
+        }
+    }
+
     public void Kill()
     {
         Debug.Log("Object was killed");
         transform.position = base_position;
+        health = base_health;
     }
 }

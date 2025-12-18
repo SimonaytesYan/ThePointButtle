@@ -8,6 +8,9 @@ public class Shooting : MonoBehaviour
     float raycast_range = 100f;
     private float laser_timer = 0;
     private const float laser_duration = 1;
+    [SerializeField] private int laser_damage = 10;
+    [SerializeField] private int base_amunition = 5;
+    private int ammunition;
 
     [SerializeField] private LayerMask hit_mask;
 
@@ -18,6 +21,8 @@ public class Shooting : MonoBehaviour
     {
         player_camera = GetComponentInChildren<Camera>();
         line_renderer = gameObject.AddComponent<LineRenderer>();
+
+        ammunition = base_amunition;
 
         line_renderer.startWidth = 0.05f;
         line_renderer.endWidth = 0.05f;
@@ -56,10 +61,19 @@ public class Shooting : MonoBehaviour
             Debug.Log("Mouse down");
             Shoot();
         }
+        else if (Input.GetButtonDown("Recharge"))
+        {
+            Recharge();
+        }
     }
 
     private void Shoot()
     {
+        if (ammunition <= 0)
+        {
+            NoAmmunition();
+            return;
+        }
         // 0.5f, 0.5f, 0.5f
         Vector3 rayOrigin = player_camera.ViewportToWorldPoint(new Vector3(0f, 0f, 0f));
         Ray ray = new Ray(rayOrigin, player_camera.transform.forward);
@@ -72,13 +86,15 @@ public class Shooting : MonoBehaviour
             endPoint = hitInfo.point;
             OnHitDetected(hitInfo);
 
-            Debug.Log($"Попал в: {hitInfo.collider.name} на расстоянии: {hitInfo.distance}");
+            Debug.Log($"пїЅпїЅпїЅпїЅпїЅ пїЅ: {hitInfo.collider.name} пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: {hitInfo.distance}");
         }
         else
         {
-            Debug.Log("Не попал");
+            Debug.Log("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ");
             endPoint = rayOrigin + ray.direction * raycast_range;
         }
+
+        ammunition -= 1;
 
         line_renderer.SetPosition(0, rayOrigin);
         line_renderer.SetPosition(1, endPoint);
@@ -92,7 +108,18 @@ public class Shooting : MonoBehaviour
         EnemyHealth enemy_health = null;
         if (hit.transform.TryGetComponent<EnemyHealth>(out enemy_health))
         {
-            enemy_health.Kill();
+            enemy_health.GetDamage(laser_damage);
         }
+    }
+
+    private void NoAmmunition()
+    {
+        Debug.Log("No ammunition");
+    }
+
+    private void Recharge()
+    {
+        ammunition = base_amunition;
+        Debug.Log($"Recharge. Now: {ammunition}");
     }
 }
