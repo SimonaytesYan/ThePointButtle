@@ -1556,6 +1556,7 @@ GameObject:
   - component: {fileID: 5678469314668106206}
   - component: {fileID: 8527613028535337120}
   - component: {fileID: 6973324113261550957}
+  - component: {fileID: 8527613028535337121}
   m_Layer: 5
   m_Name: Home
   m_TagString: Untagged
@@ -2194,7 +2195,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8527613028535337120}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8527613028535337121}
+        m_TargetAssemblyTypeName: LoadSceneButton, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &7353213235139372669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2310,6 +2323,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8527613028535337121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 785597746612790919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15845ad7af63e479f91e5b2894291aa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneName: Menu
 --- !u!1001 &8969532100501036210
 PrefabInstance:
   m_ObjectHideFlags: 0

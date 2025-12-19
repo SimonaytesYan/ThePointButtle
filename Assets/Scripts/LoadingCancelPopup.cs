@@ -6,6 +6,7 @@ public class LoadingCancelPopup : MonoBehaviour
     public GameObject popup;  
 
     public string menuSceneName = "Menu";
+    public string playerSceneName = "SampleScene";
 
     bool popupOpened = false;
 
@@ -46,11 +47,12 @@ public class LoadingCancelPopup : MonoBehaviour
     public void ConfirmExit()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(menuSceneName);
+        SceneManager.LoadScene(playerSceneName);
     }
 
     public void CancelExit()
     {
         ClosePopup();
+        SceneManager.LoadScene(menuSceneName);
     }
 }
