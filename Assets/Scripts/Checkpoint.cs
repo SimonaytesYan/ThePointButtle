@@ -95,7 +95,7 @@ public class Checkpoint : MonoBehaviour
             {
                 firstTeamPrescore = 0;
                 firstTeamScore++;
-                gameManager.GetComponent<GameManager>().updatePlayerScore();
+                gameManager.GetComponent<GameManager>().UpdateScoreServerRpc();
             }
         }
         else
@@ -110,7 +110,7 @@ public class Checkpoint : MonoBehaviour
             {
                 secondTeamPrescore = 0;
                 secondTeamScore++;
-                gameManager.GetComponent<GameManager>().updatePlayerScore();
+                gameManager.GetComponent<GameManager>().UpdateScoreServerRpc();
             }
         }
         else
