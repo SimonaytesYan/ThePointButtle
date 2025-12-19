@@ -1,6 +1,7 @@
 using UnityEngine;
+using Unity.Netcode;
 
-public class Move : MonoBehaviour
+public class Move : NetworkBehaviour
 {
     private float moveSpeed = 5f;
     private float jumpHeight = 1.5f;
@@ -27,13 +28,36 @@ public class Move : MonoBehaviour
     private Vector3 input_move_coeff = Vector3.zero;
     private Vector2 input_mouse_rotate = Vector2.zero;
 
+    public override void OnNetworkSpawn()
+    {
+        Camera playerCamera = GetComponentInChildren<Camera>();
+        AudioListener listener = GetComponentInChildren<AudioListener>();
+
+        if (playerCamera != null)
+        {
+            playerCamera.enabled = IsOwner;
+        }
+        if (listener != null)
+        {
+            listener.enabled = IsOwner;
+        }
+
+        if (IsOwner)
+        {
+            // Lock cursor to game window
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
+
     void Start()
     {
-        characterController = GetComponent<CharacterController>();
+        if (!IsOwner)
+        {
+            return;
+        }
 
-        // Lock cursor to game window
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        characterController = GetComponent<CharacterController>();
 
         if (cameraPitchPivot == null)
         {
@@ -49,6 +73,11 @@ public class Move : MonoBehaviour
 
     void Update()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
+
         ProcessInput();
         UpdateAnimatorParams();
         HandleGroundCheck();
