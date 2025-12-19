@@ -801,7 +801,7 @@ PlayerSettings:
   webGLTemplate: APPLICATION:Default
   webGLAnalyzeBuildSize: 0
   webGLUseEmbeddedResources: 0
-  webGLCompressionFormat: 0
+  webGLCompressionFormat: 2
   webGLWasmArithmeticExceptions: 0
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0
@@ -917,11 +917,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 9d7e1a01-a2d0-4424-ab8f-62a0e28c2df2
+  cloudProjectId: 7ad0b3ac-210c-4d09-8ba9-6aa407da3a6f
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: The point buttle
-  organizationId: yandexman228
+  organizationId: vladimirkrylov800
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
