@@ -1,4 +1,5 @@
 using System.Net;
+using TMPro;
 using UnityEngine;
 using Unity.Netcode;
 
@@ -10,8 +11,16 @@ public class Shooting : NetworkBehaviour
     private float laser_timer = 0;
     private const float laser_duration = 1;
     public int laser_damage = 2;
-    public int base_amunition = 10;
-    public int ammunition;
+    public NetworkVariable<int> base_ammunition = new NetworkVariable<int>(
+        10,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
+    );
+    public NetworkVariable<int> ammunition = new NetworkVariable<int>(
+        0,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
+    );
 
     [SerializeField] private LayerMask hit_mask;
 
@@ -19,16 +28,57 @@ public class Shooting : NetworkBehaviour
     private static readonly int ShootHash = Animator.StringToHash("Shoot");
     public AudioClip shootClip;
 
+    private TMP_Text ammo_text;
+    private TMP_Text base_ammo_text;
+
 
     private LineRenderer line_renderer;
     private Camera player_camera;
 
     public override void OnNetworkSpawn()
     {
+        if (IsServer)
+        {
+            ammunition.Value = base_ammunition.Value;
+        }
+
         if (IsOwner)
         {
-            ammunition = base_amunition;
+            ammunition.OnValueChanged += OnAmmoChanged;
+            base_ammunition.OnValueChanged += OnBaseAmmoChanged;
+
+            OnAmmoChanged(0, ammunition.Value);
+            OnBaseAmmoChanged(0, base_ammunition.Value);
         }
+    }
+
+    private void OnDestroy()
+    {
+        if (IsOwner)
+        {
+            ammunition.OnValueChanged -= OnAmmoChanged;
+            base_ammunition.OnValueChanged -= OnBaseAmmoChanged;
+        }
+    }
+
+    private void OnAmmoChanged(int oldValue, int newValue)
+    {
+        if (ammo_text == null)
+        {
+            return;
+        }
+
+        ammo_text.text = newValue.ToString();
+    }
+
+    private void OnBaseAmmoChanged(int oldValue, int newValue)
+    {
+        if (base_ammo_text == null)
+        {
+            return;
+        }
+
+        base_ammo_text.text = newValue.ToString();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -44,6 +94,13 @@ public class Shooting : NetworkBehaviour
         line_renderer.startColor = Color.red;
         line_renderer.endColor = Color.red;
         line_renderer.enabled = false;
+
+        GameObject hudCanvas = GameObject.Find("HUDCanvas");
+        if (hudCanvas != null)
+        {
+            ammo_text = hudCanvas.transform.Find("HUD/CatrigeBar/GunCatriageBar/Num")?.GetComponent<TMP_Text>();
+            base_ammo_text = hudCanvas.transform.Find("HUD/CatrigeBar/ExistPatrons/Num")?.GetComponent<TMP_Text>();
+        }
     }
 
     // Update is called once per frame
@@ -93,13 +150,13 @@ public class Shooting : NetworkBehaviour
         }
         else if (Input.GetButtonDown("Recharge"))
         {
-            Recharge();
+            RechargeServerRpc();
         }
     }
 
     private bool Shoot()
     {
-        if (ammunition <= 0)
+        if (ammunition.Value <= 0)
         {
             NoAmmunition();
             return false;
@@ -111,8 +168,6 @@ public class Shooting : NetworkBehaviour
 
         // call server to collide objects
         ShootServerRpc(rayOrigin, rayDirection, laser_damage);
-
-        ammunition -= 1;
         return true;
     }
 
@@ -139,15 +194,22 @@ public class Shooting : NetworkBehaviour
         Debug.Log("No ammunition");
     }
 
-    private void Recharge()
+    [ServerRpc]
+    private void RechargeServerRpc()
     {
-        ammunition = base_amunition;
+        ammunition.Value = base_ammunition.Value;
         Debug.Log($"Recharge. Now: {ammunition}");
     }
 
     [ServerRpc]
     private void ShootServerRpc(Vector3 rayOrigin, Vector3 direction, int damage)
     {
+        if (ammunition.Value <= 0)
+        {
+            return;
+        }
+        ammunition.Value -= 1;
+
         Ray ray = new Ray(rayOrigin, direction);
         RaycastHit hitInfo;
         
