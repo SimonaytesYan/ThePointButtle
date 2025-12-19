@@ -7,7 +7,7 @@ public class Checkpoint : MonoBehaviour
     private Color SecondPlayerColor = new Color(1f,   0.1f, 0,    0.5f);
 
     private const int framesPerPoint = 50;
-    [SerializeField] private int pointsForCatch = 2;
+    [SerializeField] private int pointsForCatch = 1;
     private int necessaryProgress;
 
     enum CheckpointState

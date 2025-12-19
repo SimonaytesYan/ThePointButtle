@@ -6,22 +6,51 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject gameOverUI;
-    [SerializeField] private GameObject inGameUI;
-    private TMP_Text player1Score;
-    private TMP_Text player2Score;
+    //[SerializeField] private GameObject inGameUI;
+    [SerializeField] private TMP_Text player1Score;
+    [SerializeField] private TMP_Text player2Score;
+    [SerializeField] private TMP_Text timerText;
     [SerializeField] private List<GameObject> checkpoints = new List<GameObject>();
-    private const float gameTime = 60f;
+    private const float gameTime = 100f;
     private bool gameFinished = false;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    private float currentTime;
+    private bool isRunning = false;
+
     void Start()
     {
-        player1Score = inGameUI.transform.Find("Player1Score").gameObject.GetComponent<TMP_Text>();
-        player2Score = inGameUI.transform.Find("Player2Score").gameObject.GetComponent<TMP_Text>();
+        //player1Score = inGameUI.transform.Find("Player1Score").gameObject.GetComponent<TMP_Text>();
+        //player2Score = inGameUI.transform.Find("Player2Score").gameObject.GetComponent<TMP_Text>();
+        //timerText = inGameUI.transform.Find("Timer").gameObject.GetComponent<TMP_Text>();
+
+        currentTime = gameTime;
+        UpdateTimerDisplay();
+
         Invoke(nameof(GameOver), gameTime);
     }
 
     void Update()
     {
+        if (gameFinished) return;
+
+        currentTime -= Time.deltaTime;
+
+        if (currentTime < 0)
+        {
+            currentTime = 0;
+        }
+
+        UpdateTimerDisplay();
+    }
+
+
+    void UpdateTimerDisplay()
+    {
+        if (timerText == null) return;
+
+        int minutes = Mathf.FloorToInt(currentTime / 60);
+        int seconds = Mathf.FloorToInt(currentTime % 60);
+        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
     public void updatePlayerScore()
