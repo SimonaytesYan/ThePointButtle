@@ -26,12 +26,11 @@ public class HpBarFillByPrefabs : MonoBehaviour
     void Awake()
     {
         Rebuild();
-        Refresh(currentHplistener.GetValue<int>(), maxHplistener.GetValue<int>());
     }
 
-    void Update() 
+    void Update()
     {
-        Refresh(currentHplistener.GetValue<int>(), maxHplistener.GetValue<int>());
+        
     }
 
     public void Refresh(int current, int max)

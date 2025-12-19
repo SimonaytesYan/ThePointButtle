@@ -184,7 +184,7 @@ public class Shooting : NetworkBehaviour
         
         if (hit.transform.TryGetComponent<EnemyHealth>(out var enemyHealth))
         {
-            Debug.Log($"Hit Detection {enemyHealth}");
+            Debug.Log($"Hit Detection {enemyHealth} -= {damage}");
             enemyHealth.GetDamageServerRpc(damage);
         }
     }
