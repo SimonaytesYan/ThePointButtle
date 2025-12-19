@@ -3,7 +3,7 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour
 {
     private Vector3 base_position = Vector3.zero;
-    [SerializeField] private int base_health = 100;
+    [SerializeField] private int base_health = 10;
     private int health;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
