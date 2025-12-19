@@ -8,11 +8,16 @@ public class Shooting : MonoBehaviour
     float raycast_range = 100f;
     private float laser_timer = 0;
     private const float laser_duration = 1;
-    [SerializeField] private int laser_damage = 10;
-    [SerializeField] private int base_amunition = 5;
-    private int ammunition;
+    [SerializeField] private int laser_damage = 1;
+    [SerializeField] public int base_amunition = 5;
+    public int ammunition;
 
     [SerializeField] private LayerMask hit_mask;
+
+    [SerializeField] private Animator animator; 
+    private static readonly int ShootHash = Animator.StringToHash("Shoot");
+    public AudioClip shootClip;
+
 
     private LineRenderer line_renderer;
     private Camera player_camera;
@@ -37,9 +42,18 @@ public class Shooting : MonoBehaviour
     void Update()
     {
         ProcessInput();
-
         ProcessLaser();
     }
+
+    void Fire()
+    {
+        animator?.SetTrigger(ShootHash);
+
+        if (shootClip != null) {
+            AudioManager.Instance?.PlaySfx(shootClip, 1f);
+        }
+    }
+
 
     private void ProcessLaser()
     {
@@ -59,7 +73,10 @@ public class Shooting : MonoBehaviour
         if (Input.GetButtonDown("Fire1"))
         {
             Debug.Log("Mouse down");
-            Shoot();
+            if (Shoot())
+            {
+                Fire();
+            }
         }
         else if (Input.GetButtonDown("Recharge"))
         {
@@ -67,12 +84,12 @@ public class Shooting : MonoBehaviour
         }
     }
 
-    private void Shoot()
+    private bool Shoot()
     {
         if (ammunition <= 0)
         {
             NoAmmunition();
-            return;
+            return false;
         }
         // 0.5f, 0.5f, 0.5f
         Vector3 rayOrigin = player_camera.ViewportToWorldPoint(new Vector3(0f, 0f, 0f));
@@ -101,6 +118,8 @@ public class Shooting : MonoBehaviour
         line_renderer.enabled = true;
 
         laser_timer = laser_duration;
+
+        return true;
     }
 
     private void OnHitDetected(RaycastHit hit)
