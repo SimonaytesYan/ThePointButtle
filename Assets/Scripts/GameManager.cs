@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     private TMP_Text player1Score;
     private TMP_Text player2Score;
     [SerializeField] private List<GameObject> checkpoints = new List<GameObject>();
-    private const float gameTime = 30f;
+    private const float gameTime = 60f;
     private bool gameFinished = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -32,6 +32,8 @@ public class GameManager : MonoBehaviour
 
             player1Score.text = score.first_player_score.ToString();
             player2Score.text = score.second_player_score.ToString();
+            Debug.Log($"First player score: {player1Score.text}");
+            Debug.Log($"Second player score: {player2Score.text}");
         }
     }
 
