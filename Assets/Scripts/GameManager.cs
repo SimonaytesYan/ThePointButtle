@@ -74,8 +74,6 @@ public class GameManager : NetworkBehaviour
 
             player1ScoreNet.Value = score.first_player_score;
             player2ScoreNet.Value = score.second_player_score;
-            Debug.Log($"First player score: {player1Score.text}");
-            Debug.Log($"Second player score: {player2Score.text}");
         }
     }
 

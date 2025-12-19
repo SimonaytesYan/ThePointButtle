@@ -8,7 +8,7 @@ public class Checkpoint : NetworkBehaviour
     private Color SecondPlayerColor = new Color(1f,   0.1f, 0,    0.5f);
 
     private const int framesPerPoint = 50;
-    [SerializeField] private int pointsForCatch = 1;
+    [SerializeField] private int pointsForCatch = 3;
     private int necessaryProgress;
 
     enum CheckpointState
@@ -37,8 +37,9 @@ public class Checkpoint : NetworkBehaviour
         NetworkVariableWritePermission.Server
     );
 
-    private int firstTeamProgress = 0;
-    private int secondTeamProgress = 0;
+    // if teamProgress > 0 - first team capcuring checkpoint
+    // if teamProgress < 0 - second team capcuring checkpoint
+    private int teamProgress = 0;
 
     int firstTeamPrescore = 0;
     int secondTeamPrescore = 0;
@@ -58,7 +59,7 @@ public class Checkpoint : NetworkBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (!IsServer)
         {
@@ -73,33 +74,15 @@ public class Checkpoint : NetworkBehaviour
     {
         if (checkpointState == CheckpointState.FirstPlayerInside)
         {
-            if (secondTeamProgress > 0)
-            {
-                secondTeamProgress--;
-                if (checkpointOwner.Value == CheckpointOwner.SecondPlayer)
-                    updateOwner();
-            }
-            else if (firstTeamProgress < necessaryProgress)
-            {
-                firstTeamProgress++;
-                if (firstTeamProgress == necessaryProgress)
-                    updateOwner();
-            }
+            Debug.Log($"First player inside {teamProgress}");
+            teamProgress++;
+            updateOwner();
         }
         else if (checkpointState == CheckpointState.SecondPlayerInside)
         {
-            if (firstTeamProgress > 0)
-            {
-                firstTeamProgress--;
-                if (checkpointOwner.Value == CheckpointOwner.FirstPlayer)
-                    updateOwner();
-            }
-            else if (secondTeamProgress < necessaryProgress)
-            {
-                secondTeamProgress++;
-                if (secondTeamProgress == necessaryProgress)
-                    updateOwner();
-            }
+            Debug.Log($"Second player inside {teamProgress}");
+            teamProgress--;
+            updateOwner();
         }
     }
 
@@ -138,11 +121,17 @@ public class Checkpoint : NetworkBehaviour
 
     private void updateOwner()
     {
-        if (firstTeamProgress == necessaryProgress)
+        if (teamProgress >= necessaryProgress)
+        {
             checkpointOwner.Value = CheckpointOwner.FirstPlayer;
-        else if (secondTeamProgress == necessaryProgress)
+            teamProgress = necessaryProgress;
+        }
+        else if (teamProgress <= -necessaryProgress)
+        {
             checkpointOwner.Value = CheckpointOwner.SecondPlayer;
-        else 
+            teamProgress = -necessaryProgress;
+        }
+        else
             checkpointOwner.Value = CheckpointOwner.Nobody;
     }
 
@@ -190,7 +179,6 @@ public class Checkpoint : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Trigget enter\n");
         PlayerNumber player_number_obj = null;
         if (other.gameObject.TryGetComponent<PlayerNumber>(out player_number_obj))
         {
@@ -208,7 +196,6 @@ public class Checkpoint : NetworkBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("Trigget exit\n");
         PlayerNumber player_number_obj = null;
         if (other.gameObject.TryGetComponent<PlayerNumber>(out player_number_obj))
         {
