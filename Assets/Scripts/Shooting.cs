@@ -11,6 +11,7 @@ public class Shooting : NetworkBehaviour
     private float laser_timer = 0;
     private const float laser_duration = 1;
     public int laser_damage = 2;
+
     public NetworkVariable<int> base_ammunition = new NetworkVariable<int>(
         10,
         NetworkVariableReadPermission.Everyone,
@@ -24,7 +25,7 @@ public class Shooting : NetworkBehaviour
 
     [SerializeField] private LayerMask hit_mask;
 
-    [SerializeField] private Animator animator; 
+    [SerializeField] private Animator animator;
     private static readonly int ShootHash = Animator.StringToHash("Shoot");
     public AudioClip shootClip;
 
@@ -120,11 +121,11 @@ public class Shooting : NetworkBehaviour
     {
         animator?.SetTrigger(ShootHash);
 
-        if (shootClip != null) {
+        if (shootClip != null)
+        {
             AudioManager.Instance?.PlaySfx(shootClip, 1f);
         }
     }
-
 
     private void ProcessLaser()
     {
@@ -163,25 +164,13 @@ public class Shooting : NetworkBehaviour
             return false;
         }
 
-        // 0.5f, 0.5f, 0.5f
-        Ray aimRay = player_camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-
-        RaycastHit aimHit;
-        Vector3 aimPoint;
-
-        if (Physics.Raycast(aimRay, out aimHit, raycast_range, hit_mask))
-        {
-            aimPoint = aimHit.point;
-        }
-        else
-        {
-            aimPoint = aimRay.origin + aimRay.direction * raycast_range;
-        }
+        Vector3 screenCenterWorldPoint =
+            player_camera.transform.position +
+            player_camera.transform.forward * raycast_range;
 
         Vector3 rayOrigin = muzzle.position;
-        Vector3 rayDirection = (aimPoint - rayOrigin).normalized;
+        Vector3 rayDirection = (screenCenterWorldPoint - rayOrigin).normalized;
 
-        // call server to collide objects
         ShootServerRpc(rayOrigin, rayDirection, laser_damage);
         return true;
     }
@@ -196,7 +185,7 @@ public class Shooting : NetworkBehaviour
 
         Debug.Log($"Hit Detection {hit}");
         Debug.Log($"Hit Detection {hit.transform}");
-        
+
         if (hit.transform.TryGetComponent<EnemyHealth>(out var enemyHealth))
         {
             Debug.Log($"Hit Detection {enemyHealth} -= {damage}");
@@ -227,24 +216,21 @@ public class Shooting : NetworkBehaviour
 
         Ray ray = new Ray(rayOrigin, direction);
         RaycastHit hitInfo;
-        
+
         if (Physics.Raycast(ray, out hitInfo, raycast_range, hit_mask))
         {
             if (hitInfo.transform.root == transform.root)
             {
                 Debug.Log("Ignored self-hit");
-                ShowLaserClientRpc(rayOrigin, hitInfo.point);
+                ShowLaserClientRpc(rayOrigin, rayOrigin + ray.direction * raycast_range);
                 return;
             }
 
             OnHitDetected(hitInfo, damage);
-
-            // show the corresponding laser on all clients
             ShowLaserClientRpc(rayOrigin, hitInfo.point);
         }
         else
         {
-            // show the corresponding laser on all clients
             ShowLaserClientRpc(rayOrigin, rayOrigin + ray.direction * raycast_range);
         }
     }
