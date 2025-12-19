@@ -2,8 +2,12 @@ using UnityEngine;
 
 public class Checkpoint : MonoBehaviour
 {
+    private Color DefaultColor      = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+    private Color FirstPlayerColor  = new Color(0,    1f,   1f,   0.5f);
+    private Color SecondPlayerColor = new Color(1f,   0.1f, 0,    0.5f);
+
     private const int framesPerPoint = 50;
-    [SerializeField] private int pointsForCatch = 10;
+    [SerializeField] private int pointsForCatch = 2;
     private int necessaryProgress;
 
     enum CheckpointState
@@ -38,6 +42,7 @@ public class Checkpoint : MonoBehaviour
     void Start()
     {
         necessaryProgress = framesPerPoint * pointsForCatch;
+        updateColor();
     }
 
     // Update is called once per frame
@@ -122,6 +127,19 @@ public class Checkpoint : MonoBehaviour
             checkpointOwner = CheckpointOwner.SecondPlayer;
         else 
             checkpointOwner = CheckpointOwner.Nobody;
+
+        updateColor();
+    }
+
+    private void updateColor()
+    {
+        Renderer renderer = GetComponent<Renderer>();
+        if (checkpointOwner == CheckpointOwner.FirstPlayer)
+            renderer.material.color = FirstPlayerColor;
+        else if (checkpointOwner == CheckpointOwner.SecondPlayer)
+            renderer.material.color = SecondPlayerColor;
+        else
+            renderer.material.color = DefaultColor;
     }
 
     private void FirstPlayerEnter()
