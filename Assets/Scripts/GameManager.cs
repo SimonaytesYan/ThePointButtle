@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour
         gameOverUI.SetActive(true);
         TMP_Text game_over_text = gameOverUI.GetComponentInChildren<TMP_Text>();
         Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
 
         var score = calcPlayerScore();
 
