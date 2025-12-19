@@ -28,9 +28,10 @@ public class Shooting : NetworkBehaviour
     private static readonly int ShootHash = Animator.StringToHash("Shoot");
     public AudioClip shootClip;
 
+    [SerializeField] private Transform muzzle;
+
     private TMP_Text ammo_text;
     private TMP_Text base_ammo_text;
-
 
     private LineRenderer line_renderer;
     private Camera player_camera;
@@ -163,8 +164,22 @@ public class Shooting : NetworkBehaviour
         }
 
         // 0.5f, 0.5f, 0.5f
-        Vector3 rayOrigin = player_camera.ViewportToWorldPoint(new Vector3(0f, 0f, 0f));
-        Vector3 rayDirection = player_camera.transform.forward;
+        Ray aimRay = player_camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+
+        RaycastHit aimHit;
+        Vector3 aimPoint;
+
+        if (Physics.Raycast(aimRay, out aimHit, raycast_range, hit_mask))
+        {
+            aimPoint = aimHit.point;
+        }
+        else
+        {
+            aimPoint = aimRay.origin + aimRay.direction * raycast_range;
+        }
+
+        Vector3 rayOrigin = muzzle.position;
+        Vector3 rayDirection = (aimPoint - rayOrigin).normalized;
 
         // call server to collide objects
         ShootServerRpc(rayOrigin, rayDirection, laser_damage);
@@ -215,6 +230,13 @@ public class Shooting : NetworkBehaviour
         
         if (Physics.Raycast(ray, out hitInfo, raycast_range, hit_mask))
         {
+            if (hitInfo.transform.root == transform.root)
+            {
+                Debug.Log("Ignored self-hit");
+                ShowLaserClientRpc(rayOrigin, hitInfo.point);
+                return;
+            }
+
             OnHitDetected(hitInfo, damage);
 
             // show the corresponding laser on all clients
