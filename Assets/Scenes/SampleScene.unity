@@ -643,6 +643,7 @@ GameObject:
   - component: {fileID: 258644497}
   - component: {fileID: 258644503}
   - component: {fileID: 258644504}
+  - component: {fileID: 258644505}
   m_Layer: 6
   m_Name: Player2
   m_TagString: Untagged
@@ -778,8 +779,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11b998597bd83974383e0eaf051f0cf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  base_health: 100
+  base_health: 10
   health: 0
+  name: player2
 --- !u!114 &258644504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -793,6 +795,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player_ind: 2
+--- !u!114 &258644505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 258644495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db9adb50cc11fe48a69074ee5135234, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  laser_damage: 2
+  base_amunition: 10
+  ammunition: 0
+  hit_mask:
+    serializedVersion: 2
+    m_Bits: 64
+  animator: {fileID: 338138835}
+  shootClip: {fileID: 8300000, guid: bb2e2714f962491428dcb0b38598b251, type: 3}
 --- !u!1 &270634161
 GameObject:
   m_ObjectHideFlags: 0
@@ -985,6 +1007,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 57119546939545440, guid: 24249fb8b51822c48ba356b8fe136631, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876961206254257392, guid: 24249fb8b51822c48ba356b8fe136631, type: 3}
+      propertyPath: name
+      value: Player1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876961206254257392, guid: 24249fb8b51822c48ba356b8fe136631, type: 3}
+      propertyPath: base_health
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4544686866344829875, guid: 24249fb8b51822c48ba356b8fe136631, type: 3}
+      propertyPath: laser_damage
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4544686866344829875, guid: 24249fb8b51822c48ba356b8fe136631, type: 3}
+      propertyPath: base_amunition
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6444491630886657125, guid: 24249fb8b51822c48ba356b8fe136631, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
@@ -992,6 +1034,22 @@ PrefabInstance:
     - target: {fileID: 6444491630886657125, guid: 24249fb8b51822c48ba356b8fe136631, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6485107280988629855, guid: 24249fb8b51822c48ba356b8fe136631, type: 3}
+      propertyPath: m_OcclusionCulling
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6485107280988629855, guid: 24249fb8b51822c48ba356b8fe136631, type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 6921678340950067031, guid: 24249fb8b51822c48ba356b8fe136631, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 6921678340950067031, guid: 24249fb8b51822c48ba356b8fe136631, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7048215147995344690, guid: 24249fb8b51822c48ba356b8fe136631, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1042,6 +1100,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 24249fb8b51822c48ba356b8fe136631, type: 3}
+--- !u!95 &338138835 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 7250969687105283925, guid: 24249fb8b51822c48ba356b8fe136631, type: 3}
+  m_PrefabInstance: {fileID: 338138834}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0

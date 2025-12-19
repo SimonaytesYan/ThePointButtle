@@ -2732,7 +2732,6 @@ GameObject:
   - component: {fileID: 7048215147995344690}
   - component: {fileID: 4393278546747158980}
   - component: {fileID: 2978014281556165010}
-  - component: {fileID: 57119546939545440}
   - component: {fileID: 7533606107392908485}
   - component: {fileID: 6029251449322902077}
   - component: {fileID: 4544686866344829875}
@@ -2740,6 +2739,7 @@ GameObject:
   - component: {fileID: 5762244582009153756}
   - component: {fileID: 2594581948430485363}
   - component: {fileID: 1876961206254257392}
+  - component: {fileID: 7695907569359631614}
   m_Layer: 6
   m_Name: PlayerEnhanced
   m_TagString: Untagged
@@ -2818,27 +2818,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &57119546939545440
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7951890322972992006}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7533606107392908485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2897,6 +2876,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   laser_damage: 10
   base_amunition: 5
+  ammunition: 0
   hit_mask:
     serializedVersion: 2
     m_Bits: 64
@@ -2964,6 +2944,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   base_health: 100
+  health: 0
+  name: 
+--- !u!136 &7695907569359631614
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7951890322972992006}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.57699776
+  m_Height: 2.1813784
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1 &8044028303229306013
 GameObject:
   m_ObjectHideFlags: 0

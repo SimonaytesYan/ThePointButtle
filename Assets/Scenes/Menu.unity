@@ -1512,7 +1512,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Lazer Shoot
+  m_text: The Point Buttle
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 449c349e2cdd7452b819be2d2035c026, type: 2}
   m_sharedMaterial: {fileID: -3118507421434760770, guid: 449c349e2cdd7452b819be2d2035c026, type: 2}

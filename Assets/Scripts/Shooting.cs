@@ -8,8 +8,8 @@ public class Shooting : MonoBehaviour
     float raycast_range = 100f;
     private float laser_timer = 0;
     private const float laser_duration = 1;
-    [SerializeField] private int laser_damage = 1;
-    [SerializeField] public int base_amunition = 5;
+    public int laser_damage = 2;
+    public int base_amunition = 10;
     public int ammunition;
 
     [SerializeField] private LayerMask hit_mask;
