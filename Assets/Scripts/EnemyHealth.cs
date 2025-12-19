@@ -11,6 +11,8 @@ public class EnemyHealth : NetworkBehaviour
             writePerm: NetworkVariableWritePermission.Server
         );
 
+    private HpBarFillByPrefabs hp_bar;
+
     [SerializeField] string name;
 
     public override void OnNetworkSpawn()
@@ -20,12 +22,41 @@ public class EnemyHealth : NetworkBehaviour
             base_position = transform.position;
             health.Value = base_health;
         }
+
+        if (IsOwner)
+        {
+            health.OnValueChanged += OnHealthChanged;
+
+            OnHealthChanged(0, health.Value);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (IsOwner)
+        {
+            health.OnValueChanged -= OnHealthChanged;
+        }
+    }
+
+    private void OnHealthChanged(int oldValue, int newValue)
+    {
+        if (hp_bar == null)
+        {
+            return;
+        }
+
+        hp_bar.Refresh(newValue, base_health);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
-
+        GameObject hudCanvas = GameObject.Find("HUDCanvas");
+        if (hudCanvas != null)
+        {
+            hp_bar = hudCanvas.transform.Find("HUD/HpBar/Bar")?.GetComponent<HpBarFillByPrefabs>();
+        }
     }
 
     // Update is called once per frame

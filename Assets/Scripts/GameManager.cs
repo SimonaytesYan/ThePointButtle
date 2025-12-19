@@ -2,65 +2,78 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Unity.Netcode;
 
-public class GameManager : MonoBehaviour
+public class GameManager : NetworkBehaviour
 {
     [SerializeField] private GameObject gameOverUI;
-    //[SerializeField] private GameObject inGameUI;
+    // [SerializeField] private GameObject inGameUI;
     [SerializeField] private TMP_Text player1Score;
     [SerializeField] private TMP_Text player2Score;
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private List<GameObject> checkpoints = new List<GameObject>();
     private const float gameTime = 100f;
-    private bool gameFinished = false;
 
-    private float currentTime;
+    private NetworkVariable<float> currentTime =
+        new NetworkVariable<float>(writePerm: NetworkVariableWritePermission.Server);
+
+    private NetworkVariable<int> player1ScoreNet =
+        new NetworkVariable<int>(writePerm: NetworkVariableWritePermission.Server);
+
+    private NetworkVariable<int> player2ScoreNet =
+        new NetworkVariable<int>(writePerm: NetworkVariableWritePermission.Server);
+
+    private bool gameFinished = false;
     private bool isRunning = false;
 
-    void Start()
+    public override void OnNetworkSpawn()
     {
-        //player1Score = inGameUI.transform.Find("Player1Score").gameObject.GetComponent<TMP_Text>();
-        //player2Score = inGameUI.transform.Find("Player2Score").gameObject.GetComponent<TMP_Text>();
-        //timerText = inGameUI.transform.Find("Timer").gameObject.GetComponent<TMP_Text>();
+        currentTime.OnValueChanged += (_, __) => UpdateTimerUI();
+        player1ScoreNet.OnValueChanged += (_, __) => UpdateScoreUI();
+        player2ScoreNet.OnValueChanged += (_, __) => UpdateScoreUI();
 
-        currentTime = gameTime;
-        UpdateTimerDisplay();
+        UpdateTimerUI();
+        UpdateScoreUI();
 
-        Invoke(nameof(GameOver), gameTime);
+        if (IsServer)
+        {
+            currentTime.Value = gameTime;
+        }
     }
 
     void Update()
     {
-        if (gameFinished) return;
+        if (!IsServer || gameFinished) return;
 
-        currentTime -= Time.deltaTime;
+        currentTime.Value -= Time.deltaTime;
 
-        if (currentTime < 0)
+        if (currentTime.Value < 0)
         {
-            currentTime = 0;
+            currentTime.Value = 0;
+            EndGame();
         }
 
-        UpdateTimerDisplay();
+        UpdateTimerUI();
     }
 
-
-    void UpdateTimerDisplay()
+    void UpdateTimerUI()
     {
         if (timerText == null) return;
 
-        int minutes = Mathf.FloorToInt(currentTime / 60);
-        int seconds = Mathf.FloorToInt(currentTime % 60);
+        int minutes = Mathf.FloorToInt(currentTime.Value / 60);
+        int seconds = Mathf.FloorToInt(currentTime.Value % 60);
         timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
-    public void updatePlayerScore()
+    [ServerRpc(RequireOwnership = false)]
+    public void UpdateScoreServerRpc()
     {
         if (!gameFinished)
         {
             var score = calcPlayerScore();
 
-            player1Score.text = score.first_player_score.ToString();
-            player2Score.text = score.second_player_score.ToString();
+            player1ScoreNet.Value = score.first_player_score;
+            player2ScoreNet.Value = score.second_player_score;
             Debug.Log($"First player score: {player1Score.text}");
             Debug.Log($"Second player score: {player2Score.text}");
         }
@@ -81,7 +94,21 @@ public class GameManager : MonoBehaviour
         return (first_player_score, second_player_score);
     }
 
-    public void GameOver()
+    private void EndGame()
+    {
+        if (gameFinished)
+            return;
+
+        gameFinished = true;
+
+        GameOverClientRpc(
+            player1ScoreNet.Value,
+            player2ScoreNet.Value
+        );
+    }
+
+    [ClientRpc]
+    public void GameOverClientRpc(int p1, int p2)
     {
         gameFinished = true;
         Time.timeScale = 0f;
@@ -92,12 +119,12 @@ public class GameManager : MonoBehaviour
 
         var score = calcPlayerScore();
 
-        if (score.first_player_score > score.second_player_score)
+        if (p1 > p2)
         {
             game_over_text.text = "First player win!!!";
             Debug.Log("First player win!");
         }
-        else if (score.first_player_score < score.second_player_score)
+        else if (p1 < p2)
         {
             game_over_text.text = "Second player win!!!";
             Debug.Log("Second player win!");
@@ -107,5 +134,11 @@ public class GameManager : MonoBehaviour
             game_over_text.text = "It's a draw!";
             Debug.Log("It's a draw!");
         }
+    }
+
+    private void UpdateScoreUI()
+    {
+        player1Score.text = player1ScoreNet.Value.ToString();
+        player2Score.text = player2ScoreNet.Value.ToString();
     }
 }

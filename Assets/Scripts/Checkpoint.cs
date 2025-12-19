@@ -1,6 +1,7 @@
 using UnityEngine;
+using Unity.Netcode;
 
-public class Checkpoint : MonoBehaviour
+public class Checkpoint : NetworkBehaviour
 {
     private Color DefaultColor      = new Color(0.5f, 0.5f, 0.5f, 0.5f);
     private Color FirstPlayerColor  = new Color(0,    1f,   1f,   0.5f);
@@ -28,7 +29,13 @@ public class Checkpoint : MonoBehaviour
     [SerializeField] private LayerMask playerMask;
     [SerializeField] private GameObject gameManager;
     private CheckpointState checkpointState = CheckpointState.NoPlayerInside;
-    private CheckpointOwner checkpointOwner = CheckpointOwner.Nobody;
+
+    private NetworkVariable<CheckpointOwner> checkpointOwner =
+    new NetworkVariable<CheckpointOwner>(
+        CheckpointOwner.Nobody,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
+    );
 
     private int firstTeamProgress = 0;
     private int secondTeamProgress = 0;
@@ -39,15 +46,25 @@ public class Checkpoint : MonoBehaviour
     int firstTeamScore = 0;
     int secondTeamScore = 0;
 
+    public override void OnNetworkSpawn()
+    {
+        checkpointOwner.OnValueChanged += (_, _) => updateColor();
+        updateColor();
+    }
+
     void Start()
     {
         necessaryProgress = framesPerPoint * pointsForCatch;
-        updateColor();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!IsServer)
+        {
+            return;
+        }
+
         updateProgress();
         updateScore();
     }
@@ -59,7 +76,7 @@ public class Checkpoint : MonoBehaviour
             if (secondTeamProgress > 0)
             {
                 secondTeamProgress--;
-                if (checkpointOwner == CheckpointOwner.SecondPlayer)
+                if (checkpointOwner.Value == CheckpointOwner.SecondPlayer)
                     updateOwner();
             }
             else if (firstTeamProgress < necessaryProgress)
@@ -74,7 +91,7 @@ public class Checkpoint : MonoBehaviour
             if (firstTeamProgress > 0)
             {
                 firstTeamProgress--;
-                if (checkpointOwner == CheckpointOwner.FirstPlayer)
+                if (checkpointOwner.Value == CheckpointOwner.FirstPlayer)
                     updateOwner();
             }
             else if (secondTeamProgress < necessaryProgress)
@@ -88,14 +105,14 @@ public class Checkpoint : MonoBehaviour
 
     private void updateScore() 
     {
-        if (checkpointOwner == CheckpointOwner.FirstPlayer)
+        if (checkpointOwner.Value == CheckpointOwner.FirstPlayer)
         {
             firstTeamPrescore++;
             if (firstTeamPrescore % framesPerPoint == 0)
             {
                 firstTeamPrescore = 0;
                 firstTeamScore++;
-                gameManager.GetComponent<GameManager>().updatePlayerScore();
+                gameManager.GetComponent<GameManager>().UpdateScoreServerRpc();
             }
         }
         else
@@ -103,14 +120,14 @@ public class Checkpoint : MonoBehaviour
             firstTeamPrescore = 0;
         }
 
-        if (checkpointOwner == CheckpointOwner.SecondPlayer)
+        if (checkpointOwner.Value == CheckpointOwner.SecondPlayer)
         {
             secondTeamPrescore++;
             if (secondTeamPrescore % framesPerPoint == 0)
             {
                 secondTeamPrescore = 0;
                 secondTeamScore++;
-                gameManager.GetComponent<GameManager>().updatePlayerScore();
+                gameManager.GetComponent<GameManager>().UpdateScoreServerRpc();
             }
         }
         else
@@ -122,21 +139,19 @@ public class Checkpoint : MonoBehaviour
     private void updateOwner()
     {
         if (firstTeamProgress == necessaryProgress)
-            checkpointOwner = CheckpointOwner.FirstPlayer;
+            checkpointOwner.Value = CheckpointOwner.FirstPlayer;
         else if (secondTeamProgress == necessaryProgress)
-            checkpointOwner = CheckpointOwner.SecondPlayer;
+            checkpointOwner.Value = CheckpointOwner.SecondPlayer;
         else 
-            checkpointOwner = CheckpointOwner.Nobody;
-
-        updateColor();
+            checkpointOwner.Value = CheckpointOwner.Nobody;
     }
 
     private void updateColor()
     {
         Renderer renderer = GetComponent<Renderer>();
-        if (checkpointOwner == CheckpointOwner.FirstPlayer)
+        if (checkpointOwner.Value == CheckpointOwner.FirstPlayer)
             renderer.material.color = FirstPlayerColor;
-        else if (checkpointOwner == CheckpointOwner.SecondPlayer)
+        else if (checkpointOwner.Value == CheckpointOwner.SecondPlayer)
             renderer.material.color = SecondPlayerColor;
         else
             renderer.material.color = DefaultColor;

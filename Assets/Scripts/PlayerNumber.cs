@@ -15,6 +15,11 @@ public class PlayerNumber : MonoBehaviour
         
     }
 
+    public void setPlayerInd(int playerInd)
+    {
+        player_ind = playerInd;
+    }
+
     public int getPlayerInd()
     {
         return player_ind;

@@ -2903,9 +2903,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  laser_damage: 10
-  base_amunition: 5
-  ammunition: 0
+  laser_damage: 2
+  base_ammunition:
+    m_InternalValue: 10
+  ammunition:
+    m_InternalValue: 0
   hit_mask:
     serializedVersion: 2
     m_Bits: 64

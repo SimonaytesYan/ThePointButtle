@@ -3,8 +3,6 @@ using Unity.Netcode;
 
 public class NetworkManagement : MonoBehaviour
 {
-[SerializeField] private GameObject self_prefab;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -51,5 +49,17 @@ public class NetworkManagement : MonoBehaviour
     private void OnClientConnected(ulong clientId)
     {
         Debug.Log($"Client {clientId} connected");
+        if (NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var networkClient))
+        {
+            var playerObject = networkClient.PlayerObject;
+            if (playerObject != null)
+            {
+                var playerNumber = playerObject.GetComponent<PlayerNumber>();
+                if (playerNumber != null)
+                {
+                    playerNumber.setPlayerInd((int)(clientId + 1));
+                }
+            }
+        }
     }
 }
