@@ -2910,7 +2910,7 @@ MonoBehaviour:
     m_InternalValue: 0
   hit_mask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 255
   animator: {fileID: 7250969687105283925}
   shootClip: {fileID: 8300000, guid: 7e950513b9c6d734e8130770598861f3, type: 3}
 --- !u!114 &8746600960841988432
