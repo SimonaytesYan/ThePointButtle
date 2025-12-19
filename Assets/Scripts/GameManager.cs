@@ -12,7 +12,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private TMP_Text player2Score;
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private List<GameObject> checkpoints = new List<GameObject>();
-    private const float gameTime = 100f;
+    private const float gameTime = 200f;
 
     private NetworkVariable<float> currentTime =
         new NetworkVariable<float>(writePerm: NetworkVariableWritePermission.Server);
