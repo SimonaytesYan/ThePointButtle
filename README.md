@@ -4,7 +4,7 @@
 
 ## Как запускать
 
-[Сайт с игрой](threadjava800.github.io/ThePointBattle/)
+[Сайт с игрой](https://threadjava800.github.io/ThePointBattle/)
 
 1. Зайдите на сайт, дождитесь загрузки экрана.
 2. В правом верхнем углу будет два текстовых поля.
