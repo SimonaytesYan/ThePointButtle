@@ -67,16 +67,19 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
     <Compile Include="Assets\Sci-Fi UI\Demo_Assets\scripts\GUI_Demo.cs" />
     <Compile Include="Assets\Scripts\CameraToggle.cs" />
+    <Compile Include="Assets\SciFiWarriorPBRHPPolyart\SciFi Warehouse Kit\Demo\Scripts\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\SegmentedBarUI.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
     <Compile Include="Assets\Scripts\Checkpoint.cs" />
     <Compile Include="Assets\Scripts\AudioManager.cs" />
     <Compile Include="Assets\Scripts\HpBarFillByPrefabs.cs" />
     <Compile Include="Assets\Scripts\SfxVolumeSetting.cs" />
+    <Compile Include="Assets\SciFiWarriorPBRHPPolyart\SciFi Warehouse Kit\Demo\Scripts\MouseComponent.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
     <Compile Include="Assets\Scripts\NetworkManagement.cs" />
+    <Compile Include="Assets\SciFiWarriorPBRHPPolyart\SciFi Warehouse Kit\Demo\Scripts\LightFlicker.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_UiFrameRateCounter.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexZoom.cs" />
@@ -87,6 +90,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
     <Compile Include="Assets\Scripts\PlayerStats.cs" />
     <Compile Include="Assets\Scripts\Shooting.cs" />
+    <Compile Include="Assets\SciFiWarriorPBRHPPolyart\SciFi Warehouse Kit\Demo\Scripts\PlayRandomSound.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
     <Compile Include="Assets\Scripts\StopMenuMusicOnGame.cs" />
     <Compile Include="Assets\Scripts\ButtonSfx.cs" />
@@ -104,6 +108,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
     <Compile Include="Assets\Scripts\PlayerNumber.cs" />
+    <Compile Include="Assets\SciFiWarriorPBRHPPolyart\SciFi Warehouse Kit\Demo\Scripts\PushPhysics.cs" />
     <Compile Include="Assets\Scripts\LoadingCancelPopup.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\DropdownSample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexColorCycler.cs" />
