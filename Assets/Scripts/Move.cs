@@ -3,7 +3,7 @@ using Unity.Netcode;
 
 public class Move : NetworkBehaviour
 {
-    private float moveSpeed = 5f;
+    private float moveSpeed = 7.5f;
     private float jumpHeight = 1.5f;
     private float gravity = -9.81f;
 
