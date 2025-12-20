@@ -47,4 +47,33 @@ public class NetworkManagement : MonoBehaviour
                 show_session.SetActive(false);
         }
     }
+
+    // TODO: remove me
+    void OnGUI()
+    {
+        GUILayout.BeginArea(new Rect(10, 10, 300, 300));
+
+        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+        {
+            if (GUILayout.Button("Host")) NetworkManager.Singleton.StartHost();
+            if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
+            if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
+        }
+        else
+        {
+            var mode = NetworkManager.Singleton.IsHost ? "Host" :
+                      NetworkManager.Singleton.IsServer ? "Server" : "Client";
+
+            GUILayout.Label($"Mode: {mode}");
+            GUILayout.Label($"Players: {NetworkManager.Singleton.ConnectedClients.Count}");
+
+            if (GUILayout.Button("Shutdown"))
+            {
+                NetworkManager.Singleton.Shutdown();
+            }
+        }
+
+        GUILayout.EndArea();
+    }
+
 }

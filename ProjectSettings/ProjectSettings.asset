@@ -917,11 +917,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 7ad0b3ac-210c-4d09-8ba9-6aa407da3a6f
+  cloudProjectId: 9d7e1a01-a2d0-4424-ab8f-62a0e28c2df2
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: The point buttle
-  organizationId: vladimirkrylov800
+  organizationId: yandexman228
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
