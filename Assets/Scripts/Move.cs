@@ -7,7 +7,7 @@ public class Move : NetworkBehaviour
     private float jumpHeight = 1.5f;
     private float gravity = -9.81f;
 
-    private const float mouseSensitivity = 1f;
+    private const float mouseSensitivity = 0.8f;
     private const float maxLookAngle = 90f;
 
     [SerializeField] private Transform groundCheck;
