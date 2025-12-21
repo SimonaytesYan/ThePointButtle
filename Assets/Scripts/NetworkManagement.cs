@@ -41,39 +41,20 @@ public class NetworkManagement : MonoBehaviour
             GameObject show_session = hudCanvas.transform.Find("Create Session")?.gameObject;
 
             if (join_session != null)
-                join_session.SetActive(false);
-            
-            if (show_session != null)
-                show_session.SetActive(false);
-        }
-    }
-
-    // TODO: remove me
-    void OnGUI()
-    {
-        GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-
-        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
-        {
-            if (GUILayout.Button("Host")) NetworkManager.Singleton.StartHost();
-            if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
-            if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
-        }
-        else
-        {
-            var mode = NetworkManager.Singleton.IsHost ? "Host" :
-                      NetworkManager.Singleton.IsServer ? "Server" : "Client";
-
-            GUILayout.Label($"Mode: {mode}");
-            GUILayout.Label($"Players: {NetworkManager.Singleton.ConnectedClients.Count}");
-
-            if (GUILayout.Button("Shutdown"))
             {
-                NetworkManager.Singleton.Shutdown();
+                join_session.SetActive(false);
+                Debug.Log("Join session was found");
             }
+            else
+                Debug.Log("Join session not found");
+
+            if (show_session != null)
+            {
+                show_session.SetActive(false);
+                Debug.Log("Join session was found");
+            }
+            else
+                Debug.Log("Create Session not found");
         }
-
-        GUILayout.EndArea();
     }
-
 }
