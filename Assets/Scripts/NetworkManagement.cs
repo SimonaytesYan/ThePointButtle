@@ -37,14 +37,24 @@ public class NetworkManagement : MonoBehaviour
         GameObject hudCanvas = GameObject.Find("HUDCanvas");
         if (hudCanvas != null)
         {
-            GameObject join_session = hudCanvas.transform.Find("HUD/Join Session By Code")?.gameObject;
-            GameObject show_session = hudCanvas.transform.Find("HUD/Create Session")?.gameObject;
+            GameObject join_session = hudCanvas.transform.Find("Join Session By Code")?.gameObject;
+            GameObject show_session = hudCanvas.transform.Find("Create Session")?.gameObject;
 
             if (join_session != null)
+            {
                 join_session.SetActive(false);
-            
+                Debug.Log("Join session was found");
+            }
+            else
+                Debug.Log("Join session not found");
+
             if (show_session != null)
+            {
                 show_session.SetActive(false);
+                Debug.Log("Join session was found");
+            }
+            else
+                Debug.Log("Create Session not found");
         }
     }
 }
