@@ -467,8 +467,6 @@ GameObject:
   - component: {fileID: 3089864787087563377}
   - component: {fileID: 1384440826885205133}
   - component: {fileID: 8248330712564985145}
-  - component: {fileID: 5142036449720425610}
-  - component: {fileID: 765856291859161845}
   m_Layer: 5
   m_Name: ExistPatrons
   m_TagString: Untagged
@@ -534,32 +532,3 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5142036449720425610
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7110039105546954740}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83516545f92f7759d9bb5ed5ae2536c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetObject: {fileID: 0}
-  componentName: PlayerStats
-  memberName: curPatrons
---- !u!114 &765856291859161845
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7110039105546954740}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a6a021145c9423dea3d68da1cf0ec93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  listener: {fileID: 5142036449720425610}
-  text: {fileID: 3822702023572064847}

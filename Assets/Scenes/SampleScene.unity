@@ -1108,6 +1108,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 279873214144651518, guid: ff5fd1482b1b8084b97daaafe3c0f9ad, type: 3}
+      propertyPath: maxHplistener
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 279873214144651518, guid: ff5fd1482b1b8084b97daaafe3c0f9ad, type: 3}
+      propertyPath: currentHplistener
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 2957728033870099494, guid: ff5fd1482b1b8084b97daaafe3c0f9ad, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1298,13 +1306,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9078152402110503536, guid: ff5fd1482b1b8084b97daaafe3c0f9ad, type: 3}
       propertyPath: m_Name
-      value: HUDCanvas 1
+      value: HUDCanvas
       objectReference: {fileID: 0}
     - target: {fileID: 9078152402110503536, guid: ff5fd1482b1b8084b97daaafe3c0f9ad, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7483697981729978738, guid: ff5fd1482b1b8084b97daaafe3c0f9ad, type: 3}
+    - {fileID: 6016397042939978926, guid: ff5fd1482b1b8084b97daaafe3c0f9ad, type: 3}
+    - {fileID: 544496337475084134, guid: ff5fd1482b1b8084b97daaafe3c0f9ad, type: 3}
+    - {fileID: 2955272899607715208, guid: ff5fd1482b1b8084b97daaafe3c0f9ad, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 6824966623396619567, guid: ff5fd1482b1b8084b97daaafe3c0f9ad, type: 3}
